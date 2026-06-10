@@ -4,7 +4,7 @@ env:
   variables:
     AWS_DEFAULT_REGION: us-east-1
     IMAGE_REPO_NAME: ecommerce/users
-    SQLALCHEMY_TEST_DATABASE_URI: "postgresql://test_user:test_pass@localhost:5432/test_db"
+    SQLALCHEMY_TEST_DATABASE_URI: "postgresql://test_user:test_pass@127.0.0.1:5432/test_db"
 
 phases:
   pre_build:
@@ -14,7 +14,7 @@ phases:
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
       - echo Starting test database...
-      - docker run -d --name test-db -e POSTGRES_DB=test_db -e POSTGRES_USER=test_user -e POSTGRES_PASSWORD=test_pass -p 5432:5432 public.ecr.aws/docker/library/postgres:15
+      - docker run -d --name test-db -e POSTGRES_DB=test_db -e POSTGRES_USER=test_user -e POSTGRES_PASSWORD=test_pass -p 127.0.0.1:5432:5432 public.ecr.aws/docker/library/postgres:15
       - sleep 20
       - until docker exec test-db pg_isready -U test_user -d test_db; do echo "Waiting for database..."; sleep 3; done
       - sleep 5
